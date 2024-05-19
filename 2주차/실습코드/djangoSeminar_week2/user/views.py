@@ -3,7 +3,6 @@ from django.shortcuts import render
 
 users = {}
 
-
 def login_view(request):
     global users
 
