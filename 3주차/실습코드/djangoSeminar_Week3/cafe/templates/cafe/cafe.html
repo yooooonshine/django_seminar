@@ -9,7 +9,7 @@
 </head>
 <body style="text-align: center">
 <ul id="articles" class="list-group">
-  <li class="list-group-item disabled" aria-disabled="true">목록</li>
+    <li class="list-group-item disabled" aria-disabled="true">목록</li>
 </ul>
 <br>
 제목
@@ -19,10 +19,122 @@
 <textarea name="article-content" id="content" cols="30" rows="10"></textarea>
 <button onclick="postArticle()">제출</button>
 
+<script>
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    const csrftoken = getCookie('csrftoken');
+
+    window.onload = function () {
+        getArticles();
+    };
+
+    function deleteArticle(postId) {
+        $.ajax({
+            type: 'delete',
+            headers: {'X-CSRFToken': csrftoken},
+            url: '/cafe/article?post-id=' + postId.value,
+            async: false,
+            dataType: 'JSON',
+            success: function (data) {
+                window.location.assign("/cafe_page");
+            },
+            error: function (request, status, error) {
+                if (request.status === 404) {
+                    alert("등록되지 않은 아이디입니다.");
+                } else if (request.status === 500) {
+                    alert("서버가 작동하지 않습니다.");
+                } else {
+                    alert(request.status + " 예외입니다.");
+                }
+            },
+        });
+    }
+
+    function postArticle() {
+        let data = {
+            "userId": localStorage.getItem("userId"),
+            "title": $("#title").val(),
+            "content": $("#content").val()
+        }
+
+        $.ajax({
+            type: 'post',
+            headers: {'X-CSRFToken': csrftoken},
+            url: '/cafe/article/',
+            data: JSON.stringify(data),
+            async: false,
+            dataType: 'JSON',
+            success: function (data) {
+                window.location.assign("/cafe_page");
+            },
+            error: function (request, status, error) {
+                if (request.status === 404) {
+                    alert("등록되지 않은 아이디입니다.");
+                } else if (request.status === 500) {
+                    alert("서버가 작동하지 않습니다.");
+                } else {
+                    alert(request.status + " 예외입니다.");
+                }
+            },
+        });
+    }
+
+    function getArticles() {
+
+        $.ajax({
+            type: 'get',
+            headers: {'X-CSRFToken': csrftoken},
+            url: '/cafe/article/',
+            async: false,
+            dataType: 'JSON',
+            success: function (data) {
+                showArticles(data.articles);
+            },
+            error: function (request, status, error) {
+                if (request.status === 404) {
+                    alert("등록되지 않은 아이디입니다.");
+                } else if (request.status === 500) {
+                    alert("서버가 작동하지 않습니다.");
+                } else {
+                    alert(request.status + " 예외입니다.");
+                }
+            },
+        });
+    }
+
+    function showArticles(articles) {
+        for (let i = 0; i < articles.length; i++) {
+            let userId = articles[i].user_id;
+            let title = articles[i].title;
+            let content = articles[i].content;
+            let date = articles[i].create_date;
+
+            let innerHtml = '<li className="list-group-item">' + '날짜:' + date + ', 유저명:' + userId + ', 제목:' + title + ', 내용:' + content + '</li>';
+
+            $('#articles').append(innerHtml)
+        }
+    }
+</script>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
         crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-<script src="../../static/js/cafe.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"
+        integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 </body>
 </html>

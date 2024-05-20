@@ -98,8 +98,9 @@ function showArticles(articles) {
         let userId = articles[i].user_id;
         let title = articles[i].title;
         let content = articles[i].content;
+        let date = articles[i].create_date;
 
-        let innerHtml = '<li className="list-group-item">' + '유저명:' +  userId + ', 제목:' + title + ', 내용:' + content + '</li>';
+        let innerHtml = '<li className="list-group-item">'+ '날짜:' + date + ', 유저명:' +  userId + ', 제목:' + title + ', 내용:' + content + '</li>';
 
         $('#articles').append(innerHtml)
     }

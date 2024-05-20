@@ -11,7 +11,7 @@ def login_view(request):
         user_id = request.POST.get('id')
         user_pw = request.POST.get('pw')
 
-        if User.objects.filter(id=user_id, pw=user_pw).exists():
+        if User.objects.filter(name=user_id, pw=user_pw).exists():
             return JsonResponse({'isSuccess': True, 'user_id': user_id})
         return JsonResponse({'isSuccess': False})
 
@@ -24,8 +24,8 @@ def signup_view(request):
         user_pw = request.POST.get('pw')
         user_email = request.POST.get('email')
 
-        if not User.objects.filter(id=request.POST.get('id')).exists():
-            user = User(id=user_id, pw=user_pw, email=user_email)
+        if not User.objects.filter(name=request.POST.get('id')).exists():
+            user = User(name=user_id, pw=user_pw, email=user_email)
             user.save()
 
             return JsonResponse({'isSuccess': True})
@@ -40,7 +40,9 @@ def cafe_view(request):
 
 def article(request):
     if request.method == "GET":
-        articles = Article.objects.all().values('user_id', 'title', 'content')
+        
+        articles = Article.objects.all().values('user_id', 'title', 'content', 'create_date')
+
         return JsonResponse({'articles': list(articles)})
 
     if request.method == "POST":
@@ -49,15 +51,13 @@ def article(request):
         title = data.get('title')
         content = data.get('content')
 
-        user = User.objects.get(id=user_id)
+        user = User.objects.get(name=user_id)
 
         Article(user=user, title=title, content=content).save()
 
         return JsonResponse({"isSuccess": True})
 
-    if request.method == "DELETE":
-        article_id = request.GET.get("article_id")
 
-        Article.objects.get(article_id=article_id).delete()
 
-        return JsonResponse({"isSuccess": True})
+
+
