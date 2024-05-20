@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns="http://www.w3.org/1999/html" xmlns="http://www.w3.org/1999/html"
+      xmlns="http://www.w3.org/1999/html" xmlns="http://www.w3.org/1999/html">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, height=device-height,minimum-scale=1.0, maximum-scale=1.0, initial-scale=1.0">
+    <title></title>
+</head>
+
+<body>
+
+<div class="signup-wrapper" style="margin: 0 auto; margin-top: 30px">
+    <h2>회원가입</h2>
+    <form action="" class="form-signin" method="POST" id="login-form">
+        {% csrf_token %}
+        <br>
+        아이디를 입력해주세요.
+        <input type="id" name="id" id="id" class="form-control" placeholder="Id" autofocus required>
+        <br>
+        비밀번호를 입력해주세요.
+        <input type="password" name="pw" id="password" class="form-control" placeholder="Password" autofocus required>
+        <br>
+        이메일을 입력해주세요.
+        <input type="email" name="email" id="email" class="form-control" placeholder="Password" autofocus required>
+        <br>
+        <input type="submit">
+    </form>
+    <br>
+    <div class="links">
+        <a href="/">로그인하기</a>
+    </div>
+</div>
+</body>
+</html>
+
