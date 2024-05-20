@@ -3,7 +3,7 @@ from django.db import models
 
 class User(models.Model):
     user_pk = models.AutoField(primary_key=True)
-    id = models.CharField(max_length=30)
+    id = models.CharField(max_length=30, unique=True)
     pw = models.CharField(max_length=30)
     email = models.EmailField()
 
@@ -11,7 +11,7 @@ class User(models.Model):
         return self.id
 
 
-class Post(models.Model):
+class Article(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     title = models.CharField(max_length=50, null=False, blank=False)
     content = models.TextField(max_length=5000, null=False, blank=False)
