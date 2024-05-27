@@ -104,15 +104,15 @@ function showResults(result) {
     $('#total-cost-price').text(totalCostPrice);
     $('#total-selling-price').text(totalSellingPrice);
     $('#total-earning-price').text(totalEarningPrice);
-    $('#rate-of-return').text(rateOfReturn + "%");
+    $('#rate-of-return').text(rateOfReturn);
 }
 
 //profit 저장하기
 function saveProfit() {
-    const totalCostPrice = $('#total-cost-price').val();
-    const totalSellingPrice = $('#total-selling-price').val();
-    const totalEarningPrice = $('#total-earning-price').val();
-    const rateOfReturn = $('#rate-of-return').val();
+    const totalCostPrice = $('#total-cost-price').html();
+    const totalSellingPrice = $('#total-selling-price').html();
+    const totalEarningPrice = $('#total-earning-price').html();
+    const rateOfReturn = $('#rate-of-return').html();
 
     const data = {
         "totalCostPrice" : totalCostPrice,
@@ -129,7 +129,7 @@ function saveProfit() {
         async: false,
         dataType: 'JSON',
         success: function (data) {
-            showResults(data.result)
+            alert("저장되었습니다.")
         },
         error: function (request, status, error) {
             if (request.status === 500) {
