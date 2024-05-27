@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>과일가게</title>
+    {#bootstrap#}
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+</head>
+<body>
+<nav class="navbar navbar-expand-lg bg-body-tertiary">
+    <div class="container-fluid">
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="/">계산하기</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/history-page/">이전 기록 조회하기</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<ol class="list-group" id="profit-list">
+    <li class="list-group-item">
+        <div>시간 : <span id="create-date"></span></div>
+        <div>내가 쓴 금액: <span id="total-cost-price"></span></div>
+        <div>내가 번 금액: <span id="total-selling-price"></span></div>
+        <div>내가 번 금액: <span id="total-earning-price"></span></div>
+        <div>수익률: <span id="rate-of-return"></span></div>
+    </li>
+</ol>
+
+<script>
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    const csrftoken = getCookie('csrftoken');
+
+    window.onload = function () {
+        requestAllProfits();
+    };
+
+    //입력된 기록들을 리스트로 가져오기
+    function requestAllProfits() {
+        $.ajax({
+            type: 'get',
+            headers: {'X-CSRFToken': csrftoken},
+            url: '/profit/',
+            async: false,
+            dataType: 'JSON',
+            success: function (data) {
+                showResults(data.result)
+            },
+            error: function (request, status, error) {
+                if (request.status === 500) {
+                    alert("서버가 작동하지 않습니다.");
+                } else {
+                    alert(request.status + " 예외입니다.");
+                }
+            },
+        });
+    }
+
+
+    function showResults(profitData) {
+        // Clear existing list items
+        $('#profit-list').empty();
+
+        console.log(profitData);
+
+        // Iterate over the profit data and create list items
+        profitData.forEach(function (profit) {
+            console.log(profit.total_earning_price);
+            let listItem = $('<li class="list-group-item"></li>');
+            listItem.append('<div>시간 : <span id="creatxe-date">' + new Date(profit.create_date).toLocaleString() + '</span></div>');
+            listItem.append('<div>내가 쓴 금액: <span id="total-cost-price">' + profit.total_cost_price + '</span></div>');
+            listItem.append('<div>내가 판 금액: <span id="total-selling-price">' + profit.total_selling_price + '</span></div>');
+            listItem.append('<div>내가 번 금액: <span id="total-earning-price">' + profit.total_earning_price + '</span></div>');
+            listItem.append('<div>수익률: <span id="rate-of-return">' + profit.rate_of_return + '</span></div>');
+
+            // Append the list item to the list
+            $('#profit-list').append(listItem);
+        });
+    }
+
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"
+        integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+{#<script src="../../static/js/history.js"></script>#}
+</body>
+</html>
