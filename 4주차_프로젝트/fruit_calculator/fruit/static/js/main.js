@@ -48,8 +48,8 @@ function requestCalculate() {
     $.ajax({
         type: 'post',
         headers: {'X-CSRFToken': csrftoken},
-        url: '/fruit/calculate',
-        body: JSON.stringify(data),
+        url: '/fruit/calculate/',
+        data: JSON.stringify(data),
         async: false,
         dataType: 'JSON',
         success: function (data) {
@@ -94,18 +94,49 @@ function showResults(result) {
     const totalCostPrice = result.totalCostPrice;
     const totalSellingPrice = result.totalSellingPrice;
     const totalEarningPrice = result.totalEarningPrice;
-    const netProfit = result.netProfit;
     const rateOfReturn = result.rateOfReturn;
 
     $('#total-cost-price').empty();
     $('#total-selling-price').empty();
     $('#total-earning-price').empty();
-    $('#net-profit').empty();
     $('#rate-of-return').empty();
 
     $('#total-cost-price').text(totalCostPrice);
     $('#total-selling-price').text(totalSellingPrice);
     $('#total-earning-price').text(totalEarningPrice);
-    $('#net-profit').text(netProfit);
-    $('#rate-of-return').text(rateOfReturn);
+    $('#rate-of-return').text(rateOfReturn + "%");
+}
+
+//profit 저장하기
+function saveProfit() {
+    const totalCostPrice = $('#total-cost-price').val();
+    const totalSellingPrice = $('#total-selling-price').val();
+    const totalEarningPrice = $('#total-earning-price').val();
+    const rateOfReturn = $('#rate-of-return').val();
+
+    const data = {
+        "totalCostPrice" : totalCostPrice,
+        "totalSellingPrice" : totalSellingPrice,
+        "totalEarningPrice" : totalEarningPrice,
+        "rateOfReturn" : rateOfReturn,
+    }
+
+    $.ajax({
+        type: 'post',
+        headers: {'X-CSRFToken': csrftoken},
+        url: '/profit/',
+        data: JSON.stringify(data),
+        async: false,
+        dataType: 'JSON',
+        success: function (data) {
+            showResults(data.result)
+        },
+        error: function (request, status, error) {
+            if (request.status === 500) {
+                alert("서버가 작동하지 않습니다.");
+            } else {
+                alert(request.status + " 예외입니다.");
+            }
+        },
+    });
 }
